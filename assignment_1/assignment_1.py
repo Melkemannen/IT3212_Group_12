@@ -9,7 +9,7 @@ df = pd.read_csv('OnlineNewsPopularity.csv')
 df.columns = df.columns.str.strip()
 
 df.info()
-#filtering the dataset (task 1, c)
+#Data cleaning TASK 2
 filtered_df_tokens = df[(df['n_tokens_title'] == 0) | 
                  (df['n_tokens_content'] == 0) | 
                  (df['n_unique_tokens'] == 0)]
@@ -17,6 +17,22 @@ filtered_df_tokens = df[(df['n_tokens_title'] == 0) |
 df_cleaned = df.drop(filtered_df_tokens.index)
 df_cleaned.to_csv('cleaned_tokens.csv', index=False)
 
+# Drop kw_min_min as -1 percentage is almost 60%
+df_cleaned = df_cleaned.drop(columns=['kw_min_min'])
+
+# Impute -1 to mean value in select columns
+for column in ['kw_avg_min', 'kw_min_avg']:
+    mean = df_cleaned[column][df_cleaned[column] != -1].mean()
+    # Print percentage that is -1 befor imputing
+    count = (df_cleaned[column] == -1).sum()
+    total = df_cleaned[column].count()
+    print((count/total) * 100)
+    # Impute -1 values to mean
+    df_cleaned[column] = df[column].replace(-1, mean)
+    # Print after imputing
+    count = (df_cleaned[column] == -1).sum()
+    print((count/total) * 100)
+    
 # Save the filtered DataFrame to a new CSV file
 filtered_df_tokens.to_csv('filtered_file.csv', index=False)
 
