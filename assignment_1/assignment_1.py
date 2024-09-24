@@ -10,15 +10,43 @@ df.columns = df.columns.str.strip()
 
 df.info()
 #filtering the dataset (task 1, c)
-filtered_df = df[(df['n_tokens_title'] == 0) | 
+filtered_df_tokens = df[(df['n_tokens_title'] == 0) | 
                  (df['n_tokens_content'] == 0) | 
                  (df['n_unique_tokens'] == 0)]
 
-# Save the filtered DataFrame to a new CSV file
-filtered_df.to_csv('filtered_file.csv', index=False)
+df_cleaned = df.drop(filtered_df_tokens.index)
+df_cleaned.to_csv('cleaned_tokens.csv', index=False)
 
-# display the filtered DataFrame
-print(filtered_df)
+# Save the filtered DataFrame to a new CSV file
+filtered_df_tokens.to_csv('filtered_file.csv', index=False)
+
+#Perform IQR based outlier detection on filtered_file.csv
+#Detect on tokens first, then on shares
+Q1_tokens = df_cleaned['n_tokens_content'].quantile(0.25)
+Q3_tokens = df_cleaned['n_tokens_content'].quantile(0.75)
+IQR_tokens = Q3_tokens - Q1_tokens
+print(f"TOKENS - Q1: {Q1_tokens}, Q3: {Q3_tokens}, IQR: {IQR_tokens}")
+cleaned_tokens_outliers = df_cleaned[
+    (df_cleaned['n_tokens_content'] < (Q1_tokens - 1.5 * IQR_tokens)) |
+    (df_cleaned['n_tokens_content'] > (Q3_tokens + 1.5 * IQR_tokens))
+]
+#Remove outliers from filtered_file.csv
+filtered_df_tokens_cleaned = df_cleaned.drop(cleaned_tokens_outliers.index)
+filtered_df_tokens_cleaned.to_csv('filtered_tokens_cleaned.csv', index=False)
+
+#Now for shares, stacking on cleaned_tokens_outliers
+Q1_shares = filtered_df_tokens_cleaned['shares'].quantile(0.25)
+Q3_shares = filtered_df_tokens_cleaned['shares'].quantile(0.75)
+IQR_shares = Q3_shares - Q1_shares
+print(f"SHARES - Q1: {Q1_shares}, Q3: {Q3_shares}, IQR: {IQR_shares}")
+cleaned_shares_outliers = filtered_df_tokens_cleaned[
+    (filtered_df_tokens_cleaned['shares'] < (Q1_shares - 1.5 * IQR_shares)) |
+    (filtered_df_tokens_cleaned['shares'] > (Q3_shares + 1.5 * IQR_shares))
+]
+#remove outliers from filtered_tokens_cleaned.csv
+final_outliers_removed = filtered_df_tokens_cleaned.drop(cleaned_shares_outliers.index)
+final_outliers_removed.to_csv('final_outliers_removed.csv', index=False)
+
 
 #Self explanatory
 weekday_columns = [
@@ -28,10 +56,10 @@ weekday_columns = [
 ]
 
 #Filter for double checked days
-filtered_df = df[df[weekday_columns].sum(axis=1) >= 2]
+filtered_df_weekday = df[df[weekday_columns].sum(axis=1) >= 2]
 
 #Save to file
-filtered_df.to_csv('filtered_days.csv', index=False)
+filtered_df_weekday.to_csv('filtered_days.csv', index=False)
 
 
 # find NULl values in data set
