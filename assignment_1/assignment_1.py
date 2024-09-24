@@ -8,6 +8,11 @@ df.info()
 
 missing_values = df.isnull().sum()
 
+if missing_values.any():
+    print(f"Missing values in each column:\n{missing_values[missing_values > 0]}")
+else:
+    print("No missing values found in the dataset.")
+
 categorical_columns = [
     'data_channel_is_lifestyle', 'data_channel_is_entertainment', 'data_channel_is_bus',
     'data_channel_is_socmed', 'data_channel_is_tech', 'data_channel_is_world', 
@@ -15,11 +20,6 @@ categorical_columns = [
     'weekday_is_thursday', 'weekday_is_friday', 'weekday_is_saturday',
     'weekday_is_sunday', 'is_weekend'
 ]
-
-if missing_values.any():
-    print(f"Missing values in each column:\n{missing_values[missing_values > 0]}")
-else:
-    print("No missing values found in the dataset.")
 
 for column in categorical_columns:
     unique_values = df[column].unique()
