@@ -18,17 +18,30 @@ filtered_df_tokens.to_csv('filtered_file.csv', index=False)
 
 #Perform IQR based outlier detection on filtered_file.csv
 #Detect on tokens first, then on shares
-Q1 = df_cleaned['n_tokens_content'].quantile(0.25)
-Q3 = df_cleaned['n_tokens_content'].quantile(0.75)
-IQR = Q3 - Q1
-print(f"Q1: {Q1}, Q3: {Q3}, IQR: {IQR}")
+Q1_tokens = df_cleaned['n_tokens_content'].quantile(0.25)
+Q3_tokens = df_cleaned['n_tokens_content'].quantile(0.75)
+IQR_tokens = Q3_tokens - Q1_tokens
+print(f"TOKENS - Q1: {Q1_tokens}, Q3: {Q3_tokens}, IQR: {IQR_tokens}")
 cleaned_tokens_outliers = df_cleaned[
-    (df_cleaned['n_tokens_content'] < (Q1 - 1.5 * IQR)) |
-    (df_cleaned['n_tokens_content'] > (Q3 + 1.5 * IQR))
+    (df_cleaned['n_tokens_content'] < (Q1_tokens - 1.5 * IQR_tokens)) |
+    (df_cleaned['n_tokens_content'] > (Q3_tokens + 1.5 * IQR_tokens))
 ]
 #Remove outliers from filtered_file.csv
 filtered_df_tokens_cleaned = df_cleaned.drop(cleaned_tokens_outliers.index)
 filtered_df_tokens_cleaned.to_csv('filtered_tokens_cleaned.csv', index=False)
+
+#Now for shares, stacking on cleaned_tokens_outliers
+Q1_shares = filtered_df_tokens_cleaned['shares'].quantile(0.25)
+Q3_shares = filtered_df_tokens_cleaned['shares'].quantile(0.75)
+IQR_shares = Q3_shares - Q1_shares
+print(f"SHARES - Q1: {Q1_shares}, Q3: {Q3_shares}, IQR: {IQR_shares}")
+cleaned_shares_outliers = filtered_df_tokens_cleaned[
+    (filtered_df_tokens_cleaned['shares'] < (Q1_shares - 1.5 * IQR_shares)) |
+    (filtered_df_tokens_cleaned['shares'] > (Q3_shares + 1.5 * IQR_shares))
+]
+#remove outliers from filtered_tokens_cleaned.csv
+final_outliers_removed = filtered_df_tokens_cleaned.drop(cleaned_shares_outliers.index)
+final_outliers_removed.to_csv('final_outliers_removed.csv', index=False)
 
 
 #Self explanatory
