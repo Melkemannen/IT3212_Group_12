@@ -53,3 +53,7 @@ categorical_columns = [
 for column in categorical_columns:
     unique_values = df[column].unique()
     print(f"Unique values in '{column}': {unique_values}")
+
+df = df.drop(columns=['url']) # drops the 'url' column
+
+df.to_csv('OnlineNewsPopularity_transformed.csv', index=False) # saves the cleaned dataset to a new CSV file
