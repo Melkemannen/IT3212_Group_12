@@ -16,6 +16,7 @@ filtered_df.to_csv('filtered_file.csv', index=False)
 # display the filtered DataFrame
 print(filtered_df)
 
+# find NULl values in data set
 missing_values = df.isnull().sum()
 
 if missing_values.any():
@@ -23,6 +24,7 @@ if missing_values.any():
 else:
     print("No missing values found in the dataset.")
 
+# analyze unique values in categorical columns
 categorical_columns = [
     'data_channel_is_lifestyle', 'data_channel_is_entertainment', 'data_channel_is_bus',
     'data_channel_is_socmed', 'data_channel_is_tech', 'data_channel_is_world', 
