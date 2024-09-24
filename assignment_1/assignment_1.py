@@ -1,4 +1,5 @@
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
 
 df = pd.read_csv('OnlineNewsPopularity.csv')
 
@@ -54,6 +55,25 @@ for column in categorical_columns:
     unique_values = df[column].unique()
     print(f"Unique values in '{column}': {unique_values}")
 
+## Task 4a
 df = df.drop(columns=['url']) # drops the 'url' column
 
+## Task 4b
+
+#Identifies columns that are using 0-1 range
+binary_columns = [col for col in df.columns if col.startswith('weekday_is') or col.startswith('data_channel_is')]
+
+# Identifies columns that are NOT using 0-1 range except shares??
+continuous_columns = [col for col in df.columns if col not in binary_columns and col != 'shares']
+
+# Initialize Min-Max Scaler
+scaler = MinMaxScaler()
+
+# Apply Min-Max scaling to continuous columns
+df[continuous_columns] = scaler.fit_transform(df[continuous_columns])
+
+# Now the dataframe contains the scaled features
+print(df.head())
+
+# Saves the cleaned and transformed dataset to a new CSV file
 df.to_csv('OnlineNewsPopularity_transformed.csv', index=False) # saves the cleaned dataset to a new CSV file
