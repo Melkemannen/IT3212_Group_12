@@ -2,6 +2,9 @@ import pandas as pd
 
 df = pd.read_csv('OnlineNewsPopularity.csv')
 
+#print("Duplicate rows in the dataset: ")
+#print(df.duplicated().sum())
+
 df.columns = df.columns.str.strip()
 
 df.info()
