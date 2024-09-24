@@ -1,4 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv('assignment_1/OnlineNewsPopularity.csv')
+df = pd.read_csv('OnlineNewsPopularity.csv')
 df.info()
+
+print(df.to_string())
