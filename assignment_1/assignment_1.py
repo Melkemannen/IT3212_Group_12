@@ -3,4 +3,4 @@ import pandas as pd
 df = pd.read_csv('OnlineNewsPopularity.csv')
 df.info()
 
-print(df.to_string())
+#print(df.to_string()) #printer ut alt be careful
