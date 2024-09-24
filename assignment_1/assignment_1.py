@@ -6,15 +6,15 @@ df.columns = df.columns.str.strip()
 
 df.info()
 #filtering the dataset (task 1, c)
-filtered_df = df[(df['n_tokens_title'] == 0) | 
+filtered_df_tokens = df[(df['n_tokens_title'] == 0) | 
                  (df['n_tokens_content'] == 0) | 
                  (df['n_unique_tokens'] == 0)]
 
-# Save the filtered DataFrame to a new CSV file
-filtered_df.to_csv('filtered_file.csv', index=False)
+df_cleaned = df.drop(filtered_df_tokens.index)
+df_cleaned.to_csv('cleaned_tokens.csv', index=False)
 
-# display the filtered DataFrame
-print(filtered_df)
+# Save the filtered DataFrame to a new CSV file
+filtered_df_tokens.to_csv('filtered_file.csv', index=False)
 
 #Self explanatory
 weekday_columns = [
@@ -24,10 +24,10 @@ weekday_columns = [
 ]
 
 #Filter for double checked days
-filtered_df = df[df[weekday_columns].sum(axis=1) >= 2]
+filtered_df_weekday = df[df[weekday_columns].sum(axis=1) >= 2]
 
 #Save to file
-filtered_df.to_csv('filtered_days.csv', index=False)
+filtered_df_weekday.to_csv('filtered_days.csv', index=False)
 
 
 # find NULl values in data set
