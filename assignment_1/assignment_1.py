@@ -16,6 +16,20 @@ filtered_df.to_csv('filtered_file.csv', index=False)
 # display the filtered DataFrame
 print(filtered_df)
 
+#Self explanatory
+weekday_columns = [
+    'weekday_is_monday', 'weekday_is_tuesday', 'weekday_is_wednesday',
+    'weekday_is_thursday', 'weekday_is_friday', 'weekday_is_saturday',
+    'weekday_is_sunday'
+]
+
+#Filter for double checked days
+filtered_df = df[df[weekday_columns].sum(axis=1) >= 2]
+
+#Save to file
+filtered_df.to_csv('filtered_days.csv', index=False)
+
+
 # find NULl values in data set
 missing_values = df.isnull().sum()
 
