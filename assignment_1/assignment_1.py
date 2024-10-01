@@ -36,7 +36,8 @@ for column in ['kw_avg_min', 'kw_min_avg']:
 # Save the filtered DataFrame to a new CSV file
 filtered_df_tokens.to_csv('filtered_file.csv', index=False)
 
-#Perform IQR based outlier detection on filtered_file.csv
+#df_cleaned is the most up to date csv? 
+#Perform IQR based outlier detection on filtered_df_tokens
 #Detect on tokens first, then on shares
 Q1_tokens = df_cleaned['n_tokens_content'].quantile(0.25)
 Q3_tokens = df_cleaned['n_tokens_content'].quantile(0.75)
@@ -59,9 +60,15 @@ cleaned_shares_outliers = filtered_df_tokens_cleaned[
     (filtered_df_tokens_cleaned['shares'] < (Q1_shares - 1.5 * IQR_shares)) |
     (filtered_df_tokens_cleaned['shares'] > (Q3_shares + 1.5 * IQR_shares))
 ]
-#remove outliers from filtered_tokens_cleaned.csv
-final_outliers_removed = filtered_df_tokens_cleaned.drop(cleaned_shares_outliers.index)
-final_outliers_removed.to_csv('final_outliers_removed.csv', index=False)
+# We will use the Qx-/+ 1.5*IQR_shares  as the caps, we know we only need to handle the Q3+1.5*IQR_shares case
+# Cap the 'shares' column
+filtered_df_tokens_cleaned.loc[
+    filtered_df_tokens_cleaned['shares'] < (Q3_shares + 1.5 * IQR_shares), 'shares'] = Q3_shares
+
+# Save the modified DataFrame to a CSV file
+final_outliers_removed = filtered_df_tokens_cleaned
+#Switch of name to make sure everything works down the line
+final_outliers_removed.to_csv('final_outliers_removed_and_capped.csv', index=False)
 
 
 #Self explanatory
