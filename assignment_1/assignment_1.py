@@ -1,5 +1,8 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
 
 df = pd.read_csv('OnlineNewsPopularity.csv')
 
@@ -128,3 +131,47 @@ print(df.head())
 
 # Saves the cleaned and transformed dataset to a new CSV file
 df.to_csv('OnlineNewsPopularity_transformed.csv', index=False) # saves the cleaned dataset to a new CSV file
+
+# TASK 6 PCA
+variances = df.var()
+variances = variances.sort_values(ascending=False)
+variances = variances.index[:8]
+
+df_subset = df[variances]
+cov_matrix = df_subset.cov()
+
+'''plt.figure(figsize=(8,6))
+sns.heatmap(cov_matrix, annot=True, cmap='coolwarm', linewidths=0.5)
+plt.title("Covariance Matrix Heatmap")
+plt.show()'''
+
+#mean_variance = df.var().mean()
+
+variancesList = []
+
+for i in range(2, 60):
+    pca = PCA(n_components=i)
+    df_transformed = pca.fit_transform(df)
+    df_transformed = pd.DataFrame(df_transformed)
+
+    sum_variance = df_transformed.var().sum()
+    variancesList.append(sum_variance)
+
+    print(len(df_transformed.columns))
+    print(sum_variance)
+    
+
+x_values = range(1, len(variancesList) + 1)
+
+# Create the plot
+plt.figure(figsize=(10, 6))
+plt.plot(x_values, variancesList, marker='o', linestyle='-', color='b')
+
+# Add labels and title
+plt.xlabel("Principal Components", fontsize=12)
+plt.ylabel("Variance Amount", fontsize=12)
+plt.title("Variance Explained by Principal Components", fontsize=14)
+
+# Show the plot
+plt.grid(True)
+plt.show()
