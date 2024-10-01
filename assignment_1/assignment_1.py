@@ -115,7 +115,7 @@ df = df.drop(columns=['url']) # drops the 'url' column
 binary_columns = [col for col in df.columns if col.startswith('weekday_is') or col.startswith('data_channel_is')]
 
 # Identifies columns that are NOT using 0-1 range except shares??
-continuous_columns = [col for col in df.columns if col not in binary_columns and col != 'shares']
+continuous_columns = [col for col in df.columns if col not in binary_columns]
 
 # Initialize Min-Max Scaler
 scaler = MinMaxScaler()
